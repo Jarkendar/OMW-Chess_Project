@@ -1,0 +1,1 @@
+Tests pgn download from http://www.cs.put.poznan.pl/mszelag/Teaching/OiMW/lab_11-projekt/pgn-examples.zip and paste here.
