@@ -2,6 +2,8 @@ public class Main {
 
     public static void main(String[] args) {
         //todo parse command args
+        Config config = new CommandParser().parseCommandArguments(args);
+
         //todo read file
         //todo parse file
         //todo filters
