@@ -1,3 +1,5 @@
+package configuration;
+
 public enum Header {
     MINIMAL("minimal"),
     CONCISE("concise"),

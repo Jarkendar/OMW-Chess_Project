@@ -1,3 +1,6 @@
+import configuration.CommandParser;
+import configuration.Config;
+
 public class Main {
 
     public static void main(String[] args) {

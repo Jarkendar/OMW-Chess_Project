@@ -1,3 +1,5 @@
+package configuration;
+
 import java.util.Arrays;
 
 public class Config {
@@ -29,7 +31,7 @@ public class Config {
 
     @Override
     public String toString() {
-        return "Config{" +
+        return "configuration.Config{" +
                 "header=" + header +
                 ", minCentiPawns=" + minCentiPawns +
                 ", minEngineSearch=" + minEngineSearch +

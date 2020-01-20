@@ -1,3 +1,5 @@
+package configuration;
+
 public class CommandParser {
 
     //todo
