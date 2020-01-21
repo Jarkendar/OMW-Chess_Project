@@ -1,6 +1,8 @@
 import chess.parser.pgn.PGNGame;
 import configuration.CommandParser;
 import configuration.Config;
+import filters.FilterManager;
+import filters.FilterResult;
 
 import java.util.List;
 
@@ -17,6 +19,9 @@ public class Main {
         List<PGNGame> pgnGameList = pgnFileManager.parsePgnFile(config.getInputPath());
 
         //todo filters
+        FilterManager filterManager = new FilterManager();
+        List<FilterResult> filterResults = filterManager.filterGames(pgnGameList);
+
         //todo save output file || (send to server -> receive result -> save output file)
     }
 }
