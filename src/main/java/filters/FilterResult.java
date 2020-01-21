@@ -1,3 +1,5 @@
+package filters;
+
 import chess.parser.Entity;
 import chess.parser.pgn.PGNGame;
 

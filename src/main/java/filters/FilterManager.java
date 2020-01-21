@@ -1,3 +1,5 @@
+package filters;
+
 import chess.parser.pgn.PGNGame;
 
 import java.util.LinkedList;

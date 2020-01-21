@@ -1,6 +1,8 @@
 import chess.parser.pgn.PGNGame;
 import configuration.CommandParser;
 import configuration.Config;
+import filters.FilterManager;
+import filters.FilterResult;
 
 import java.util.List;
 
