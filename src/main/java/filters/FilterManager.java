@@ -37,7 +37,7 @@ public class FilterManager {
         return filters.toArray(new Filter[0]);
     }
 
-    public List<FilterResult> filterGames(List<PGNGame> games) {
-        return null;
+    public LinkedList<FilterResult> filterGames(List<PGNGame> games) {
+        return new LinkedList<>();
     }
 }

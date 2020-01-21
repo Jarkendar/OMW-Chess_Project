@@ -23,5 +23,11 @@ public class Main {
         List<FilterResult> filterResults = filterManager.filterGames(pgnGameList);
 
         //todo save output file || (send to server -> receive result -> save output file)
+        ServerConnector serverConnector = new ServerConnector(config.getPathToServerConfig(), config.getMinEngineSearch());
+        serverConnector.ratedGames(filterResults);
+
+        //todo save output
+
+
     }
 }

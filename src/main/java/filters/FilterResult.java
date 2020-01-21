@@ -3,16 +3,26 @@ package filters;
 import chess.parser.Entity;
 import chess.parser.pgn.PGNGame;
 
-import java.util.List;
+import java.util.LinkedList;
 
 public class FilterResult {
 
     private PGNGame pgnGame;
-    private List<Entity> potentialMoves;
+    private LinkedList<Entity> potentialMoves;
+    private LinkedList<RatedEntity> ratedEntities;
 
-    public FilterResult(PGNGame pgnGame, List<Entity> potentialMoves) {
+    public FilterResult(PGNGame pgnGame, LinkedList<Entity> potentialMoves) {
         this.pgnGame = pgnGame;
         this.potentialMoves = potentialMoves;
+        ratedEntities = new LinkedList<>();
+    }
+
+    public void addRatedEntity(RatedEntity ratedEntity){
+        ratedEntities.addLast(ratedEntity);
+    }
+
+    public LinkedList<RatedEntity> getRatedEntities() {
+        return ratedEntities;
     }
 
     public PGNGame getPgnGame() {
@@ -23,11 +33,11 @@ public class FilterResult {
         this.pgnGame = pgnGame;
     }
 
-    public List<Entity> getPotentialMoves() {
+    public LinkedList<Entity> getPotentialMoves() {
         return potentialMoves;
     }
 
-    public void setPotentialMoves(List<Entity> potentialMoves) {
+    public void setPotentialMoves(LinkedList<Entity> potentialMoves) {
         this.potentialMoves = potentialMoves;
     }
 }
