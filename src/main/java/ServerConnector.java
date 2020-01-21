@@ -19,7 +19,7 @@ public class ServerConnector {
         //todo to something
     }
 
-    public List<RatedGame> ratedGames(List<FilterResult> filterResults){
+    public LinkedList<RatedGame> ratedGames(List<FilterResult> filterResults){
         LinkedList<RatedGame> ratedGames = new LinkedList<>();
         for (FilterResult result: filterResults) {
             ratedGames.addLast(new RatedGame(result.getPgnGame(), ratePotentialMoves(result.getPotentialMoves())));
