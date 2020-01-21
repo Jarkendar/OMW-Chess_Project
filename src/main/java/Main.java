@@ -4,6 +4,7 @@ import configuration.Config;
 import filters.FilterManager;
 import filters.FilterResult;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class Main {
@@ -20,14 +21,13 @@ public class Main {
 
         //todo filters
         FilterManager filterManager = new FilterManager();
-        List<FilterResult> filterResults = filterManager.filterGames(pgnGameList);
+        LinkedList<FilterResult> filterResults = filterManager.filterGames(pgnGameList);
 
         //todo save output file || (send to server -> receive result -> save output file)
         ServerConnector serverConnector = new ServerConnector(config.getPathToServerConfig(), config.getMinEngineSearch());
-        serverConnector.ratedGames(filterResults);
+        LinkedList<RatedGame> ratedGames = serverConnector.ratedGames(filterResults);
 
         //todo save output
-
-
+        pgnFileManager.savePgnFile(config.getOutputPath(), ratedGames);
     }
 }
