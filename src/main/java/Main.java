@@ -17,6 +17,9 @@ public class Main {
         List<PGNGame> pgnGameList = pgnFileManager.parsePgnFile(config.getInputPath());
 
         //todo filters
+        FilterManager filterManager = new FilterManager();
+        List<FilterResult> filterResults = filterManager.filterGames(pgnGameList);
+
         //todo save output file || (send to server -> receive result -> save output file)
     }
 }
