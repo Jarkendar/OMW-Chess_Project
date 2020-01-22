@@ -6,5 +6,5 @@ import java.util.List;
 
 public abstract class Filter {
 
-    public abstract List<Entity> searchPotentialMoves();
+    public abstract List<Entity> searchPotentialMoves(List<Entity> entities);
 }
