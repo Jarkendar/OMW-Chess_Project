@@ -17,7 +17,6 @@ public class PgnFileManager {
             return null;
         }
         games = setMovesPositions(games);
-        System.out.println(games.get(0).getEntities().size());
         return filterMovesFromGames(games);
     }
 
