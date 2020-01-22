@@ -1,5 +1,6 @@
 package filters;
 
+import chess.parser.Entity;
 import chess.parser.pgn.PGNGame;
 
 import java.util.LinkedList;
@@ -38,6 +39,19 @@ public class FilterManager {
     }
 
     public LinkedList<FilterResult> filterGames(List<PGNGame> games) {
+        LinkedList<FilterResult> filterResults = new LinkedList<>();
+        for (PGNGame game: games){
+            LinkedList<List<Entity>> filtersOutput = new LinkedList<>();
+            for (int i = 0; i<filters.length; i++){
+                filtersOutput.addLast(filters[i].searchPotentialMoves(game.getEntities()));
+            }
+            filterResults.addLast(new FilterResult(game, joinFilterOutputList(filtersOutput)));
+        }
+        return filterResults;
+    }
+
+    private LinkedList<Entity> joinFilterOutputList(LinkedList<List<Entity>> filtersOutput){
+        //todo maybe voting? on moves all filters are par
         return new LinkedList<>();
     }
 }
