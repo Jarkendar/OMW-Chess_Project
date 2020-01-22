@@ -1,3 +1,4 @@
+import chess.parser.*;
 import chess.parser.pgn.PGNGame;
 import chess.parser.pgn.PGNReader;
 
@@ -15,7 +16,9 @@ public class PgnFileManager {
         } catch (IOException e) {
             return null;
         }
-        return games;
+        games = setMovesPositions(games);
+        System.out.println(games.get(0).getEntities().size());
+        return filterMovesFromGames(games);
     }
 
     public void savePgnFile(String outputPath, LinkedList<RatedGame> ratedGames){
@@ -29,6 +32,49 @@ public class PgnFileManager {
             e.printStackTrace();
         }
     }
+
+    private List<PGNGame> filterMovesFromGames(List<PGNGame> games){
+        for(PGNGame game: games){
+            game.setEntities(filterRealMoves(game.getEntities()));
+        }
+        return games;
+    }
+
+    /**
+     * Filter all variants, comments, gamebegin. Leave only moves.
+     * @param entities list of entity
+     * @return filtered entity list only moves contains
+     */
+    private List<Entity> filterRealMoves(List<Entity> entities){
+        LinkedList<Entity> newEntities = new LinkedList<>();
+        int variantDepth = 0;
+        for (Entity entity: entities){
+            if (entity instanceof VariantBegin){
+                variantDepth++;
+            }
+            if (variantDepth == 0 && entity instanceof Move){
+                newEntities.addLast(entity);
+            } else if (entity instanceof VariantEnd){
+                 variantDepth--;
+            }
+        }
+        return newEntities;
+    }
+
+    private List<PGNGame> setMovesPositions(List<PGNGame> games){
+        if (games != null) {
+            SANMoveMaker sanMoveMaker;
+            for (PGNGame pgnGame : games) {
+                ChessGame chessGame = new ChessGameImpl();
+                PossibleMovesProviderImpl possibleMovesProvider = new PossibleMovesProviderImpl(chessGame);
+                sanMoveMaker = new SANMoveMaker(chessGame, possibleMovesProvider);
+                sanMoveMaker.processMoves(pgnGame.getEntities());
+            }
+        }
+        return games;
+    }
+
+
 
     private String createStringFromRatedGames(RatedGame ratedGame){
         return ratedGame.toString();//todo
