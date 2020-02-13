@@ -1,6 +1,8 @@
 import chess.parser.*;
+import chess.parser.pgn.Meta;
 import chess.parser.pgn.PGNGame;
 import chess.parser.pgn.PGNReader;
+import configuration.Header;
 
 import java.io.*;
 import java.util.LinkedList;
@@ -8,7 +10,7 @@ import java.util.List;
 
 public class PgnFileManager {
 
-    public List<PGNGame> parsePgnFile(String inputPath){
+    public List<PGNGame> parsePgnFile(String inputPath, Header header){
         List<PGNGame> games;
         try (Reader reader = new BufferedReader(new FileReader(new File(inputPath)))) {
             PGNReader pgnReader = new PGNReader();
@@ -17,10 +19,24 @@ public class PgnFileManager {
             return null;
         }
         games = setMovesPositions(games);
+        for (PGNGame game : games)
+        	filterMeta(game, header);
         System.out.println(games.get(0).getEntities().size());
         return filterMovesFromGames(games);
     }
 
+	private void filterMeta(PGNGame game, Header header) {
+		if(header == Header.ALL)
+			for(Meta meta : game.getMeta())
+				meta.setRequired(true);
+
+		if(header == Header.CONCISE)
+			for(Meta meta : game.getMeta())
+				if(meta.getKey().equals("Site") || meta.getKey().equals("Date")
+						|| meta.getKey().equals("White") || meta.getKey().equals("Black"))
+					meta.setRequired(true);
+	}
+	
     public void savePgnFile(String outputPath, LinkedList<RatedGame> ratedGames){
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(outputPath)))){
             for(RatedGame ratedGame: ratedGames) {

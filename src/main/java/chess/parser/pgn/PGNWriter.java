@@ -22,7 +22,8 @@ public class PGNWriter {
     public String write(List<Entity> entities, List<Meta> meta) {
         String out = "";
         for (Meta m : meta) {
-            out += '[' + m.getKey() + " \"" + m.getValue() + "\"]\n";
+        	if(m.isRequired())
+        		out += '[' + m.getKey() + " \"" + m.getValue() + "\"]\n";
         }
         out += '\n';
         out += write(entities);

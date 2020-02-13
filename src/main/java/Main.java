@@ -17,7 +17,7 @@ public class Main {
         //todo read file
         //todo parse file
         PgnFileManager pgnFileManager = new PgnFileManager();
-        List<PGNGame> pgnGameList = pgnFileManager.parsePgnFile(config.getInputPath());
+        List<PGNGame> pgnGameList = pgnFileManager.parsePgnFile(config.getInputPath(), config.getHeader());
 
         //todo filters
         FilterManager filterManager = new FilterManager();
