@@ -17,9 +17,12 @@ public class PGNGame {
 
     private List<Entity> entities;
 
+    private List<String> fens;
+
     public PGNGame(List<Meta> meta, List<Entity> entities) {
         this.meta = meta;
         this.entities = entities;
+        this.fens = null;
     }
 
     public PGNGame() {
@@ -34,6 +37,14 @@ public class PGNGame {
 
     public void setMeta(List<Meta> meta) {
         this.meta = meta;
+    }
+    
+    public List<String> getFens() {
+    	return fens;
+    }
+
+    public void setFens(List<String> fens) {
+        this.fens = fens;
     }
 
     public List<Entity> getEntities() {

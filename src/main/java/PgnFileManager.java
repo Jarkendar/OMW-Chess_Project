@@ -84,7 +84,8 @@ public class PgnFileManager {
                 ChessGame chessGame = new ChessGameImpl();
                 PossibleMovesProviderImpl possibleMovesProvider = new PossibleMovesProviderImpl(chessGame);
                 sanMoveMaker = new SANMoveMaker(chessGame, possibleMovesProvider);
-                sanMoveMaker.processMoves(pgnGame.getEntities());
+                List<String> fens = sanMoveMaker.processMoves(pgnGame.getEntities());
+                pgnGame.setFens(fens);
             }
         }
         return games;

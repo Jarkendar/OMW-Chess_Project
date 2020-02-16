@@ -4,6 +4,7 @@ package chess.parser;
 //import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,7 +34,8 @@ public class SANMoveMaker {
         this.possibleMovesProvider = possibleMovesProvider;
     }
 
-    public void processMoves(List<Entity> entities) {
+    public List<String> processMoves(List<Entity> entities) {
+    	List<String> fens = new LinkedList();
         for (int i = 0; i < entities.size(); i++) {
             Entity e = entities.get(i);
             if (e instanceof Move) {
@@ -41,6 +43,7 @@ public class SANMoveMaker {
                 //long time = System.currentTimeMillis();
                 processMove(m, chessGame.getNextMovePlayerColor());
                 chessGame.makeMove(m, m.getFromX(), m.getFromY(), m.getToX(), m.getToY());
+                fens.add(chessGame.getFen());
                 //Log.d(TAG, String.format("playToPosition time %.10f", (System.currentTimeMillis() - time) / 1000.f));
             } else if (e instanceof VariantBegin || e instanceof VariantEnd) {
                 //long time = System.currentTimeMillis();
@@ -48,6 +51,7 @@ public class SANMoveMaker {
                 //Log.d(TAG, String.format("playToPosition time %.10f", (System.currentTimeMillis() - time) / 1000.f));
             }
         }
+        return fens;
     }
 
     public void processMove(Move m, int color) {

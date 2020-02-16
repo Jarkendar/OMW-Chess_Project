@@ -21,6 +21,9 @@ public class ChessGameImpl implements ChessGame, Cloneable {
 
     private boolean locked = false;
 
+    private int halfMovesCount=0;
+    private int movesCount=0;
+
     public ChessGameImpl() {
         this.moveFactory = new MoveFactory(new PossibleMovesProviderImpl(this));
         this.moveList = new LinkedList<>();
@@ -34,6 +37,7 @@ public class ChessGameImpl implements ChessGame, Cloneable {
         moveList.add(move);
         move.setNo(moveList.size());
         registerKingAndRookMoves(move);
+        updateMovesCount(move);
     }
 
     @Override
@@ -45,6 +49,15 @@ public class ChessGameImpl implements ChessGame, Cloneable {
         }
         makeMove(m);
         move.setNo(m.getNo());
+    }
+    
+    private void updateMovesCount(Move m) {
+    	if(!m.isCapture() && m.getPiece()!=Piece.PAWN)
+    		halfMovesCount++;
+    	else
+    		halfMovesCount=0;
+    	if(m.getColor()==PieceColor.WHITE)
+    		movesCount++;
     }
 
     private void registerKingAndRookMoves(Move move) {
@@ -231,5 +244,102 @@ public class ChessGameImpl implements ChessGame, Cloneable {
         chessGame.blackKSRookMoved = blackKSRookMoved;
         chessGame.blackQSRookMoved = blackQSRookMoved;
         return chessGame;
+    }
+
+    
+    
+    public String getFen() {
+
+        StringBuffer fen = new StringBuffer();
+        for(int row = 7; row>=0; row--) {
+        	int countFreeFields = 0;
+        	for(int col=0; col<8; col++) {
+        		int fieldValue = this.board[col][row];
+        		if(fieldValue==0)
+        			countFreeFields++;
+        		else {
+        			String move = "";
+        			int pieceValue = fieldValue>=PieceColor.BLACK?fieldValue-PieceColor.BLACK:fieldValue-PieceColor.WHITE;
+        			switch (pieceValue) {
+	                    case Consts.KING:
+	                        move += 'k';
+	                        break;
+	                    case Consts.QUEEN:
+	                        move += 'q';
+	                        break;
+	                    case Piece.BISHOP:
+	                        move += 'b';
+	                        break;
+	                    case Piece.KNIGHT:
+	                        move += 'n';
+	                        break;
+	                    case Piece.QS_ROOK:
+	                    case Piece.KS_ROOK:
+	                        move += 'r';
+	                        break;
+	                    case Piece.PAWN:
+	                        move += 'p';
+	                        break;
+	                    default:
+	                        break;
+        			}
+        			if(fieldValue<PieceColor.BLACK)
+        				move = move.toUpperCase();
+        			if(countFreeFields>0) {
+        				fen.append(countFreeFields);
+        				countFreeFields=0;
+        			}
+        			fen.append(move);
+        		}
+        	}
+        	if(countFreeFields>0)
+        		fen.append(countFreeFields);
+        	if(row>0)
+        		fen.append("/");
+        	else
+        		fen.append(" ");
+        }
+
+        
+        if (this.getNextMovePlayerColor() == PieceColor.WHITE)
+            fen.append("w ");
+        else
+            fen.append("b ");
+
+        
+        String castling = "";
+        if(!whiteKingMoved) {
+        	if(!whiteKSRookMoved)
+        		castling+="K";
+        	if(!whiteQSRookMoved)
+        		castling+="Q";
+        }
+        if(!blackKingMoved) {
+        	if(!blackKSRookMoved)
+        		castling+="k";
+        	if(!blackQSRookMoved)
+        		castling+="q";
+        }
+        castling = castling.equals("")?"-":castling;
+        fen.append(castling);
+        
+        Move m = moveList.get(moveList.size()-1);
+        if(m.getPiece()==Piece.PAWN && Math.abs(m.getFromY()-m.getToY())==2) {
+        	String enPassant = "";
+        	char col = (char)((int)'a' + m.getFromX());
+        	enPassant+=col;
+        	if(m.getFromY()==6)
+        		enPassant+=6;
+        	else
+        		enPassant+=3;
+        	fen.append(" "+enPassant+" ");
+        }
+        else 
+        	fen.append(" - ");
+        
+        
+        fen.append(halfMovesCount+" "+movesCount);
+        
+        return fen.toString();
     }
 }

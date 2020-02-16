@@ -43,4 +43,6 @@ public interface ChessGame {
     List<Move> getMoveList();
 
     ChessGame clone();
+    
+    public String getFen();
 }

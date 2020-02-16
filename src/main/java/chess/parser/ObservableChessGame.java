@@ -135,4 +135,9 @@ public class ObservableChessGame extends Observable implements ChessGame {
         this.setChanged();
         this.notifyObservers(ACTION_NEW_GAME);
     }
+
+	@Override
+	public String getFen() {
+		return chessGame.getFen();
+	}
 }
