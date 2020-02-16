@@ -18,11 +18,12 @@ public class PgnFileManager {
         } catch (IOException e) {
             return null;
         }
+        games = filterMovesFromGames(games);
         games = setMovesPositions(games);
         for (PGNGame game : games)
         	filterMeta(game, header);
         System.out.println(games.get(0).getEntities().size());
-        return filterMovesFromGames(games);
+        return games;
     }
 
 	private void filterMeta(PGNGame game, Header header) {
