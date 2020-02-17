@@ -50,7 +50,7 @@ public class FilterManager {
     private FilterResult filterGame(PGNGame pgnGame){
         ArrayList<List<Entity>> arrayOfFilteredList = new ArrayList<>(filters.length);
         for (Filter filter: filters){
-            arrayOfFilteredList.add(filter.searchPotentialMoves(pgnGame.getEntities()));
+            arrayOfFilteredList.add(filter.searchPotentialMoves(pgnGame.getEntities(), pgnGame));
         }
 
         LinkedList<Entity> intersectMoves = intersectFiltersPotentialMoves(arrayOfFilteredList);
