@@ -7,6 +7,9 @@ import chess.parser.pgn.PGNGame;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * The filter looks for all rooks.
+ */
 public class RookFilter extends Filter {
 
     @Override
