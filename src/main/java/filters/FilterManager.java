@@ -29,6 +29,7 @@ public class FilterManager {
                     break;
                 }
                 case 2: {
+                    filters.addLast(new FigureBeat());
                     break;
                 }
                 case 3: {
