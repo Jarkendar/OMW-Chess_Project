@@ -36,6 +36,9 @@ public class FilterManager {
                     filters.addLast(new QueenBeat());
                     break;
                 }
+                case 4: {
+                    filters.addLast(new QueenSacrifice());
+                }
             }
         }
         return filters.toArray(new Filter[0]);
