@@ -2,6 +2,7 @@ package filters;
 
 import chess.parser.Entity;
 import chess.parser.pgn.PGNGame;
+import filters.filter_classes.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -12,7 +13,7 @@ public class FilterManager {
     private Filter[] filters;
 
     public FilterManager() {
-        this.filters = createFiltersList(new int[]{1, 2, 3});
+        this.filters = createFiltersList(new int[]{1, 2, 3, 4, 5, 6});
     }
 
     public FilterManager(int[] filtersKey) {
@@ -29,9 +30,23 @@ public class FilterManager {
                     break;
                 }
                 case 2: {
+                    filters.addLast(new FigureBeat());
                     break;
                 }
                 case 3: {
+                    filters.addLast(new QueenBeat());
+                    break;
+                }
+                case 4: {
+                    filters.addLast(new QueenSacrifice());
+                    break;
+                }
+                case 5: {
+                    filters.addLast(new RookFilter());
+                    break;
+                }
+                case 6: {
+                    filters.addLast(new Sacrifice());
                     break;
                 }
             }
