@@ -12,7 +12,7 @@ public class FilterManager {
     private Filter[] filters;
 
     public FilterManager() {
-        this.filters = createFiltersList(new int[]{1, 2, 3});
+        this.filters = createFiltersList(new int[]{1, 2, 3, 4, 5});
     }
 
     public FilterManager(int[] filtersKey) {
@@ -38,6 +38,11 @@ public class FilterManager {
                 }
                 case 4: {
                     filters.addLast(new QueenSacrifice());
+                    break;
+                }
+                case 5: {
+                    filters.addLast(new RookFilter());
+                    break;
                 }
             }
         }
