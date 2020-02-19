@@ -10,8 +10,9 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        //todo parse command args
-        //test args src/main/resources/examples/<fileName> output.pgn
+
+        //test args: src/main/resources/examples/<fileName> output.pgn
+        //extends args: -h all -cp 100 -d 10 -n 3 -e src/main -f 1,2,3,4 src/main/resources/examples/<fileName> output.pgn
         Config config = new CommandParser().parseCommandArguments(args);
 
         //todo read file
