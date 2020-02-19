@@ -1,4 +1,4 @@
-package filters;
+package filters.filter_classes;
 
 import chess.parser.Entity;
 import chess.parser.Move;
@@ -8,21 +8,25 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * The filter looks for all beats.
+ * The filters look for all queen beats.
  */
-public class FigureBeat extends Filter {
+public class QueenBeat extends Filter {
 
     @Override
     public List<Entity> searchPotentialMoves(List<Entity> moves, PGNGame game) {
         LinkedList<Entity> potentialMove = new LinkedList<>();
 
         for(int i = 1; i<moves.size(); i++){
-            if (killEnemy((Move) moves.get(i), game.getFens().get(i-1))){
+            if (killEnemy((Move) moves.get(i), game.getFens().get(i-1)) && isQueen((Move) moves.get(i))){
                 potentialMove.addLast(moves.get(i));
             }
         }
 
         return potentialMove;
+    }
+
+    private boolean isQueen(Move move){
+        return move.getPiece() == 5;
     }
 
     private boolean killEnemy(Move move, String fen){
@@ -49,5 +53,4 @@ public class FigureBeat extends Filter {
     private boolean isShift(char c){
         return String.valueOf(c).matches("[0-9]");
     }
-
 }

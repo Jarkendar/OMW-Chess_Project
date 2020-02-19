@@ -1,4 +1,4 @@
-package filters;
+package filters.filter_classes;
 
 import chess.parser.Entity;
 import chess.parser.Move;
@@ -8,42 +8,40 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * The filter looks for moves where figure with greater power is beats by figure (or pawn) with smaller power.
+ * The filter looking for all queen sacrifice. Queen sacrifice is all lost queen, doesn't matter queen beats or no beats.
  */
-public class Sacrifice extends Filter {
+public class QueenSacrifice extends Filter {
 
-    @Override
     public List<Entity> searchPotentialMoves(List<Entity> moves, PGNGame game) {
-        LinkedList<Entity> potentialMoves = new LinkedList<>();
+        LinkedList<Entity> potentialMove = new LinkedList<>();
 
-        boolean lastFigure = false;
-        int lastFigurePiece = -1;
-        int[] lastFigurePositionYX = new int[]{-1, -1};
-        for (int i = 0; i<moves.size(); i++){
+        int[] lastQueenPositionYX = new int[]{-1, -1};
+        boolean lastQueenMoved = false;
+        for(int i = 1; i<moves.size(); i++){
             Move move = (Move) moves.get(i);
-            if (lastFigure
+            if (lastQueenMoved
                     && killEnemy(move, game.getFens().get(i-1))
-                    && isTheSameField(lastFigurePositionYX[1], lastFigurePositionYX[0], move.getToX(), move.getToY())
-                    && lastFigurePiece > move.getPiece()){
-                potentialMoves.addLast(moves.get(i));
+                    && isTheSameField(lastQueenPositionYX[1], lastQueenPositionYX[0], move.getToX(), move.getToY() )){
+                potentialMove.addLast(moves.get(i));
             }
-
-            if (move.getPiece() > 2){
-                lastFigure = true;
-                lastFigurePiece = move.getPiece();
-                lastFigurePositionYX = new int[]{move.getToY(), move.getToY()};
+            if (isQueen(move)){
+                lastQueenMoved = true;
+                lastQueenPositionYX = new int[]{move.getToY(), move.getToX()};
             } else {
-                lastFigure = false;
-                lastFigurePiece = -1;
-                lastFigurePositionYX = new int[]{-1, -1};
+                lastQueenMoved = false;
+                lastQueenPositionYX = new int[]{-1, -1};
             }
         }
 
-        return potentialMoves;
+        return potentialMove;
     }
 
     private boolean isTheSameField(int lastX, int lastY, int x, int y){
         return lastX == x && lastY == y;
+    }
+
+    private boolean isQueen(Move move){
+        return move.getPiece() == 5;
     }
 
     private boolean killEnemy(Move move, String fen){

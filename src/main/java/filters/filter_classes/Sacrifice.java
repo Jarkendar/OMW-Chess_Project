@@ -1,4 +1,4 @@
-package filters;
+package filters.filter_classes;
 
 import chess.parser.Entity;
 import chess.parser.Move;
@@ -8,26 +8,34 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * The filter searches moves in which player don't kill enemy after loss figure. Don't recaptures field.
+ * The filter looks for moves where figure with greater power is beats by figure (or pawn) with smaller power.
  */
-public class NoRecapture extends Filter {
+public class Sacrifice extends Filter {
 
     @Override
     public List<Entity> searchPotentialMoves(List<Entity> moves, PGNGame game) {
         LinkedList<Entity> potentialMoves = new LinkedList<>();
-        boolean lastKilled = false;
-        int[] lastYX = new int[]{-1, -1};
-        for(int i = 1; i < moves.size(); i++){
-            Move move = (Move)moves.get(i);
-            if (killEnemy(move, game.getFens().get(i-1))){
-                if (lastKilled && !isTheSameField(lastYX[1], lastYX[0], move.getToX(), move.getToY())){
-                    potentialMoves.addLast(moves.get(i));
-                }
-                lastKilled = true;
-                lastYX = new int[]{move.getToY(), move.getToX()};
+
+        boolean lastFigure = false;
+        int lastFigurePiece = -1;
+        int[] lastFigurePositionYX = new int[]{-1, -1};
+        for (int i = 0; i<moves.size(); i++){
+            Move move = (Move) moves.get(i);
+            if (lastFigure
+                    && killEnemy(move, game.getFens().get(i-1))
+                    && isTheSameField(lastFigurePositionYX[1], lastFigurePositionYX[0], move.getToX(), move.getToY())
+                    && lastFigurePiece > move.getPiece()){
+                potentialMoves.addLast(moves.get(i));
+            }
+
+            if (move.getPiece() > 2){
+                lastFigure = true;
+                lastFigurePiece = move.getPiece();
+                lastFigurePositionYX = new int[]{move.getToY(), move.getToY()};
             } else {
-                lastKilled = false;
-                lastYX = new int[]{-1, -1};
+                lastFigure = false;
+                lastFigurePiece = -1;
+                lastFigurePositionYX = new int[]{-1, -1};
             }
         }
 

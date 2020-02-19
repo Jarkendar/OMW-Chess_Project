@@ -1,4 +1,4 @@
-package filters;
+package filters.filter_classes;
 
 import chess.parser.Entity;
 import chess.parser.Move;

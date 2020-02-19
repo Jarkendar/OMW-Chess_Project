@@ -2,6 +2,7 @@ package filters;
 
 import chess.parser.Entity;
 import chess.parser.pgn.PGNGame;
+import filters.filter_classes.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
