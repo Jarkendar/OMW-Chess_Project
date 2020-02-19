@@ -33,6 +33,7 @@ public class FilterManager {
                     break;
                 }
                 case 3: {
+                    filters.addLast(new QueenBeat());
                     break;
                 }
             }
