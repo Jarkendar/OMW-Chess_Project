@@ -19,10 +19,9 @@ public class Main {
         PgnFileManager pgnFileManager = new PgnFileManager();
         List<PGNGame> pgnGameList = pgnFileManager.parsePgnFile(config.getInputPath(), config.getHeader());
 
-        //todo filters
         FilterManager filterManager = new FilterManager();
         LinkedList<FilterResult> filterResults = filterManager.filterGames(pgnGameList);
-        System.out.println(filterResults.get(0).getPotentialMoves().size());
+
         //todo save output file || (send to server -> receive result -> save output file)
         ServerConnector serverConnector = new ServerConnector(config.getPathToServerConfig(), config.getMinEngineSearch());
         LinkedList<RatedGame> ratedGames = serverConnector.ratedGames(filterResults);

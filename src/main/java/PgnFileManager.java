@@ -22,7 +22,6 @@ public class PgnFileManager {
         games = setMovesPositions(games);
         for (PGNGame game : games)
         	filterMeta(game, header);
-        System.out.println(games.get(0).getEntities().size());
         return games;
     }
 
