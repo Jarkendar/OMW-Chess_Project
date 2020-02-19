@@ -1,11 +1,11 @@
-#Filters doc
+# Filters doc
 
 Add -f \<filter numbers separate comma\> before paths in command to select specific filters. Default all filters are include. Results is intersection results of all include filters.
 
-####Abstract classes
-* *Filter* - Abstract class filter with methods to inherit.
+#### Abstract classes
+* **Filter** - Abstract class filter with methods to inherit.
 
-####Filters
+#### Filters
 The number is the abbreviation for the filter in the command 
 * 1 - **NoRecapture** - The filter searches moves in which player don't kill enemy after loss figure. Don't recaptures field.
 * 2 - **FigureBeat** - The filter looks for all beats.
