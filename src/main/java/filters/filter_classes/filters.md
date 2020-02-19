@@ -1,6 +1,6 @@
 # Filters doc
 
-Add -f \<filter numbers separate comma\> before paths in command to select specific filters. Default all filters are include. Results is intersection results of all include filters.
+Add -f \<filter numbers separate comma without space\> before paths in command to select specific filters. Default all filters are include. Results is intersection results of all include filters.
 
 #### Abstract classes
 * **Filter** - Abstract class filter with methods to inherit.
