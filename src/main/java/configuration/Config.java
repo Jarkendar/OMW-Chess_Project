@@ -9,7 +9,7 @@ public class Config {
     private int minEngineSearch = 30;
     private int minAcceptableValue = 2;
     private String pathToServerConfig = "uciServer.json";
-    private int[] filtersNumber = new int[]{1,2,3};//default all
+    private int[] filtersNumber = new int[]{1,2,3,4,5,6};//default all
     private String inputPath;
     private String outputPath;
 
