@@ -8,10 +8,12 @@ import java.util.List;
 public class ServerConnector {
 
     private int maxDepth;
+    UCIHttpClient uciClient;
 
     public ServerConnector(String pathToServerConfigFile, int maxDepth) {
         this.maxDepth = maxDepth;
         parseServerConfig(pathToServerConfigFile);
+        uciClient = new UCIHttpClient();
         //maybe in constructor prepare to connect
     }
 
