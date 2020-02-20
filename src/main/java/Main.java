@@ -20,7 +20,7 @@ public class Main {
         PgnFileManager pgnFileManager = new PgnFileManager();
         List<PGNGame> pgnGameList = pgnFileManager.parsePgnFile(config.getInputPath(), config.getHeader());
 
-        FilterManager filterManager = new FilterManager();
+        FilterManager filterManager = new FilterManager(config.getFiltersNumber());
         LinkedList<FilterResult> filterResults = filterManager.filterGames(pgnGameList);
 
         //todo save output file || (send to server -> receive result -> save output file)
