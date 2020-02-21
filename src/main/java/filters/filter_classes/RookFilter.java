@@ -16,9 +16,11 @@ public class RookFilter extends Filter {
     public List<Entity> searchPotentialMoves(List<Entity> moves, PGNGame game) {
         LinkedList<Entity> potentialMoves = new LinkedList<>();
 
-        for (Entity move : moves) {
-            if (((Move) move).getPiece() == 1 || ((Move) move).getPiece() == 2) {
-                potentialMoves.addLast(move);
+        for(int i = 1; i<moves.size(); i++){
+            if (((Move) moves.get(i)).getPiece() == 1 || ((Move) moves.get(i)).getPiece() == 2) {
+                ((Move) moves.get(i)).setBoardBefore(game.getFens().get(i-1));
+                ((Move) moves.get(i)).setBoardAfter(game.getFens().get(i));
+                potentialMoves.addLast(moves.get(i));
             }
         }
 

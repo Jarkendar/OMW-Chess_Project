@@ -21,6 +21,8 @@ public class NoRecapture extends Filter {
             Move move = (Move)moves.get(i);
             if (killEnemy(move, game.getFens().get(i-1))){
                 if (lastKilled && !isTheSameField(lastYX[1], lastYX[0], move.getToX(), move.getToY())){
+                    ((Move) moves.get(i)).setBoardBefore(game.getFens().get(i-1));
+                    ((Move) moves.get(i)).setBoardAfter(game.getFens().get(i));
                     potentialMoves.addLast(moves.get(i));
                 }
                 lastKilled = true;

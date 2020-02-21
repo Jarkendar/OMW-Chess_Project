@@ -3,6 +3,7 @@ import chess.parser.pgn.Meta;
 import chess.parser.pgn.PGNGame;
 import chess.parser.pgn.PGNReader;
 import configuration.Header;
+import filters.RatedEntity;
 
 import java.io.*;
 import java.util.LinkedList;
@@ -44,6 +45,7 @@ public class PgnFileManager {
                 bufferedWriter.newLine();
             }
             bufferedWriter.flush();
+            System.out.println("Output file generated successfully");
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -91,9 +93,20 @@ public class PgnFileManager {
         return games;
     }
 
-
-
     private String createStringFromRatedGames(RatedGame ratedGame){
-        return ratedGame.toString();//todo
+        String output = "";
+        RatedEntity bestMove = ratedGame.getBestMove();
+        if (bestMove != null) {
+            //todo: dodac headery (filterMeta?)
+            String fen = bestMove.getBoardBefore();
+            output += "[FEN \""+ fen + "\"]\n";
+            output += ((Move) bestMove.getEntity()).getPANRepresentation(); //todo: Zmienic na poprawna notacje
+            output += "{" + bestMove.getCentiPawsRate() + "}";
+            //todo: waracje jako second best i third best z uwzglednieniem parametru -cp
+            //todo: czy byl uzyty w grze {G}
+            output += "\n";
+        }
+
+        return output;
     }
 }

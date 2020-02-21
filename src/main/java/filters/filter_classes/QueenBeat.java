@@ -18,6 +18,8 @@ public class QueenBeat extends Filter {
 
         for(int i = 1; i<moves.size(); i++){
             if (killEnemy((Move) moves.get(i), game.getFens().get(i-1)) && isQueen((Move) moves.get(i))){
+                ((Move) moves.get(i)).setBoardBefore(game.getFens().get(i-1));
+                ((Move) moves.get(i)).setBoardAfter(game.getFens().get(i));
                 potentialMove.addLast(moves.get(i));
             }
         }

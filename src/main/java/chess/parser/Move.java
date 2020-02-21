@@ -20,6 +20,8 @@ public class Move extends Entity {
     private int color = 0;
     private int[] nag = {};
     private String san;
+    private String boardBefore;
+    private String boardAfter;
 
     public Move() {
     }
@@ -130,6 +132,22 @@ public class Move extends Entity {
 
     public void setEnPassant(boolean enPassant) {
         this.enPassant = enPassant;
+    }
+
+    public String getBoardBefore(){
+        return boardBefore;
+    }
+
+    public void setBoardBefore(String board){
+        this.boardBefore = board;
+    }
+
+    public String getBoardAfter(){
+        return boardAfter;
+    }
+
+    public void setBoardAfter(String board){
+        this.boardAfter = board;
     }
 
     public String getPANRepresentation() {

@@ -23,11 +23,12 @@ public class Main {
         FilterManager filterManager = new FilterManager(config.getFiltersNumber());
         LinkedList<FilterResult> filterResults = filterManager.filterGames(pgnGameList);
 
-        //todo save output file || (send to server -> receive result -> save output file)
         ServerConnector serverConnector = new ServerConnector(config.getPathToServerConfig(), config.getMinEngineSearch());
         LinkedList<RatedGame> ratedGames = serverConnector.ratedGames(filterResults);
 
         //todo save output
         pgnFileManager.savePgnFile(config.getOutputPath(), ratedGames);
+
+        serverConnector.closeConnection();
     }
 }

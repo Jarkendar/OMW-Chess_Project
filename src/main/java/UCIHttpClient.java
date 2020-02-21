@@ -10,6 +10,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.WebSocket;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,24 +28,19 @@ public class UCIHttpClient {
     private WebSocket socket;
     private WebSocketClient socketListener;
 
-    public UCIHttpClient(){
-        URL resource = UCIHttpClient.class.getResource("server_config.json");
-        try {
-            this.config = loadConfig(Paths.get(resource.toURI()).toString());
-            httpClient = HttpClient.newBuilder().build();
-            login();
-            getAvailableEngines();
-            startEngine();
-            initializeSocket(4);
-            //stopEngine();
-        }catch(URISyntaxException e){
-            e.printStackTrace();
-        }
+    public UCIHttpClient(String resource){
+        this.config = loadConfig(resource);
+        httpClient = HttpClient.newBuilder().build();
+        login();
+        getAvailableEngines();
+        startEngine();
+        initializeSocket(getThreads());
     }
 
     private JSONObject getConfig(){
         return this.config;
     }
+
     private String getUser(){
         return this.config.get("login").toString();
     }
@@ -63,6 +59,11 @@ public class UCIHttpClient {
 
     private String getEngine(){
         return this.engine;
+    }
+
+    private Integer getThreads()
+    {
+        return Integer.parseInt(this.config.get("threads").toString());
     }
 
     private JSONObject loadConfig(String configPath){
@@ -84,7 +85,7 @@ public class UCIHttpClient {
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(data))
                 .uri(URI.create(getUrl() + "user/login"))
-                .setHeader("User-Agent", "Java 11 HttpClient Bot") // add request header
+                .setHeader("User-Agent", "Java 11 HttpClient Bot")
                 .header("Content-Type", "application/json")
                 .build();
 
@@ -105,7 +106,7 @@ public class UCIHttpClient {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(getUrl()+"engine/available"))
-                .setHeader("User-Agent", "Java 11 HttpClient Bot") // add request header
+                .setHeader("User-Agent", "Java 11 HttpClient Bot")
                 .header("Authorization", "Bearer " + this.token)
                 .build();
 
@@ -133,7 +134,7 @@ public class UCIHttpClient {
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(jsonData))
                 .uri(URI.create(getUrl() + "engine/start"))
-                .setHeader("User-Agent", "Java 11 HttpClient Bot") // add request header
+                .setHeader("User-Agent", "Java 11 HttpClient Bot")
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + this.token)
                 .build();
@@ -155,7 +156,7 @@ public class UCIHttpClient {
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString("null"))
                 .uri(URI.create(getUrl() + "engine/stop"))
-                .setHeader("User-Agent", "Java 11 HttpClient Bot") // add request header
+                .setHeader("User-Agent", "Java 11 HttpClient Bot")
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + this.token)
                 .build();
@@ -173,8 +174,9 @@ public class UCIHttpClient {
     }
 
     private static class WebSocketClient implements WebSocket.Listener {
+        List<List<String>> msgsArr = new ArrayList<>();
         List<String> msgs = new ArrayList<>();
-        private Boolean flag = false;
+        private List<Boolean> flags = new ArrayList<Boolean>();
 
         public WebSocketClient() {}
 
@@ -190,7 +192,9 @@ public class UCIHttpClient {
             msgs.add(message.toString());
             String msg = message.toString();
             if (msg.contains("bestmove")) {
-                flag = true;
+                msgsArr.add(msgs);
+                flags.add(true);
+                msgs = new ArrayList<>();
             }
             return WebSocket.Listener.super.onText(webSocket, message, last);
         }
@@ -201,12 +205,13 @@ public class UCIHttpClient {
             WebSocket.Listener.super.onError(webSocket, error);
         }
 
-        public Boolean getFlag() {
-            return flag;
+        public Boolean getFlag(int n) {
+            if (n >= flags.size()){ return false;}
+            return flags.get(n);
         }
 
-        public List<String> getResponse() {
-            return msgs;
+        public List<String> getResponse(int n) {
+            return msgsArr.get(n);
         }
     }
 
@@ -226,26 +231,26 @@ public class UCIHttpClient {
         socket.sendText("setoption name Threads value " + cores.toString(), true);
     }
 
-    public Integer rateGame(String fen, Integer depth){
-        fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-
+    public Integer rateGame(String fen, Integer depth, Integer n){
         socket.sendText("ucinewgame", true);
         socket.sendText("position fen " + fen, true);
         socket.sendText("go depth " + depth.toString(), true);
 
-        while(!socketListener.getFlag()){
+        while(!socketListener.getFlag(n)){
             try {
-                Thread.sleep(50);
+                Thread.sleep(5);
             }catch(InterruptedException e){
                 e.printStackTrace();
             }
         }
 
-        List<String> response = socketListener.getResponse();
+        List<String> response = socketListener.getResponse(n);
         Integer value = processResponse(response);
-        //socket.sendText("stop", true);
         return value;
+    }
 
+    public void stopSocket(){
+        socket.sendText("stop", true);
     }
 
     private Integer processResponse(List<String> response){

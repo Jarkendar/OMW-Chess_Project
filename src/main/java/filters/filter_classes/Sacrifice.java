@@ -25,6 +25,8 @@ public class Sacrifice extends Filter {
                     && killEnemy(move, game.getFens().get(i-1))
                     && isTheSameField(lastFigurePositionYX[1], lastFigurePositionYX[0], move.getToX(), move.getToY())
                     && lastFigurePiece > move.getPiece()){
+                ((Move) moves.get(i)).setBoardBefore(game.getFens().get(i-1));
+                ((Move) moves.get(i)).setBoardAfter(game.getFens().get(i));
                 potentialMoves.addLast(moves.get(i));
             }
 

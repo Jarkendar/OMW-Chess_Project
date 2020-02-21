@@ -22,6 +22,8 @@ public class QueenSacrifice extends Filter {
             if (lastQueenMoved
                     && killEnemy(move, game.getFens().get(i-1))
                     && isTheSameField(lastQueenPositionYX[1], lastQueenPositionYX[0], move.getToX(), move.getToY() )){
+                ((Move) moves.get(i)).setBoardBefore(game.getFens().get(i-1));
+                ((Move) moves.get(i)).setBoardAfter(game.getFens().get(i));
                 potentialMove.addLast(moves.get(i));
             }
             if (isQueen(move)){
