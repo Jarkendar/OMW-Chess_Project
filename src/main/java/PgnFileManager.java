@@ -98,20 +98,39 @@ public class PgnFileManager {
         String output = "";
         RatedEntity bestMove = ratedGame.getBestMove();
         if (bestMove != null) {
-            //todo: dodac headery (filterMeta?)
+        	List<Meta> metas = ratedGame.getGames().getMeta();
+        	for (Meta m : metas) {
+            	if(m.isRequired())
+            		output += '[' + m.getKey() + " \"" + m.getValue() + "\"]\n";
+            }
             //todo: czy byl uzyty w grze {G}
             String fen = bestMove.getBoardBefore();
+        	ChessGame chessGame = new ChessGameImpl();
+            int moveNb = ratedGame.getGames().getFens().indexOf(fen);
+            List<Entity> movesToPlay = ratedGame.getGames().getEntities().subList(0, moveNb);
+            PossibleMovesProviderImpl possibleMovesProvider = new PossibleMovesProviderImpl(chessGame);
+            SANMoveMaker sanMoveMaker = new SANMoveMaker(chessGame, possibleMovesProvider);
+            sanMoveMaker.processMoves(movesToPlay);
+            
+            String originalMove = ((Move)(ratedGame.getGames().getEntities().get(moveNb))).getPANRepresentation();
             output += "[FEN \""+ fen + "\"]\n";
-            output += ((Move) bestMove.getEntity()).getPANRepresentation(); //todo: Zmienic na poprawna notacje
+            output += ((Move) bestMove.getEntity()).getSan(); //todo: Zmienic na poprawna notacje
             output += " {" + bestMove.getCentiPawsRate() + "} ";
+            if(originalMove.equals(((Move) bestMove.getEntity()).getPANRepresentation()))
+				output+="{G} ";
 			ArrayList<String> variationsPv = bestMove.getVariationsPv();
             ArrayList<Integer> variationsCp = bestMove.getVariationsCp();
             for (int k = 0; k < Math.min(variationsCp.size(), 2); k++){
                 String goodMovePv = variationsPv.get(k);
+                String sanRepresentation = SANHelper.replaceSymbolsWithLetters(SANHelper.getSanFromLAN(goodMovePv, chessGame));
+                chessGame.undoLastMove();
                 Integer goodMoveCp = variationsCp.get(k);
                 if( bestMove.getCentiPawsRate() - goodMoveCp >= minCp ){
-                    output += "(" + goodMovePv; //todo: zamienić na poprawną notację
-                    output += "{" + goodMoveCp.toString() + "})";
+                    output += "(" + sanRepresentation; //todo: zamienić na poprawną notację
+                    if(originalMove.equals(goodMovePv))
+                    	output += "{" + goodMoveCp.toString() + "}{G})";
+                    else
+                    	output += "{" + goodMoveCp.toString() + "})";
                 }
             }
             output += "\n";

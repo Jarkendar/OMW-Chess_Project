@@ -30,6 +30,13 @@ public class ChessGameImpl implements ChessGame, Cloneable {
         this.board = new int[8][8];
         BoardUtils.initBoard(this.board);
     }
+    
+    public ChessGameImpl(String fen) {
+        this.moveFactory = new MoveFactory(new PossibleMovesProviderImpl(this));
+        this.moveList = new LinkedList<>();
+        this.board = new int[8][8];
+        BoardUtils.initBoard(this.board, fen);
+    }
 
     @Override
     public void makeMove(Move move) {
