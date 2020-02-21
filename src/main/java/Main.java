@@ -27,7 +27,7 @@ public class Main {
         LinkedList<RatedGame> ratedGames = serverConnector.ratedGames(filterResults);
 
         //todo save output
-        pgnFileManager.savePgnFile(config.getOutputPath(), ratedGames);
+        pgnFileManager.savePgnFile(config.getOutputPath(), config.getMinCentiPawns(), ratedGames);
 
         serverConnector.closeConnection();
     }

@@ -4,14 +4,10 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import java.io.*;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.WebSocket;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +24,7 @@ public class UCIHttpClient {
     private WebSocket socket;
     private WebSocketClient socketListener;
 
-    public UCIHttpClient(String resource){
+    public UCIHttpClient(String resource) {
         this.config = loadConfig(resource);
         httpClient = HttpClient.newBuilder().build();
         login();
@@ -37,46 +33,45 @@ public class UCIHttpClient {
         initializeSocket(getThreads());
     }
 
-    private JSONObject getConfig(){
+    private JSONObject getConfig() {
         return this.config;
     }
 
-    private String getUser(){
+    private String getUser() {
         return this.config.get("login").toString();
     }
 
-    private String getPassword(){
+    private String getPassword() {
         return this.config.get("password").toString();
     }
 
-    private String getUrl(){
+    private String getUrl() {
         return this.config.get("uci_server_url").toString();
     }
 
-    private String getWstUrl(){
+    private String getWstUrl() {
         return this.config.get("uci_server_socket_url").toString();
     }
 
-    private String getEngine(){
+    private String getEngine() {
         return this.engine;
     }
 
-    private Integer getThreads()
-    {
+    private Integer getThreads() {
         return Integer.parseInt(this.config.get("threads").toString());
     }
 
-    private JSONObject loadConfig(String configPath){
+    private JSONObject loadConfig(String configPath) {
         JSONObject configObject = new JSONObject();
-        try{
+        try {
             configObject = (JSONObject) parser.parse(new InputStreamReader(new FileInputStream(configPath)));
-        }catch(ParseException | IOException e){
+        } catch (ParseException | IOException e) {
             e.printStackTrace();
         }
         return configObject;
     }
 
-    private void login(){
+    private void login() {
         JSONObject json = new JSONObject();
         json.put("login", getUser());
         json.put("password", getPassword());
@@ -91,21 +86,21 @@ public class UCIHttpClient {
 
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode()==200){
+            if (response.statusCode() == 200) {
                 System.out.println("Logged succesfully");
                 JSONObject loginResponse = (JSONObject) parser.parse(response.body());
                 this.token = loginResponse.get("token").toString();
             }
-        }catch(IOException | InterruptedException | ParseException e){
+        } catch (IOException | InterruptedException | ParseException e) {
             System.out.println("Login failed");
             e.printStackTrace();
         }
     }
 
-    private void getAvailableEngines(){
+    private void getAvailableEngines() {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create(getUrl()+"engine/available"))
+                .uri(URI.create(getUrl() + "engine/available"))
                 .setHeader("User-Agent", "Java 11 HttpClient Bot")
                 .header("Authorization", "Bearer " + this.token)
                 .build();
@@ -113,20 +108,19 @@ public class UCIHttpClient {
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             JSONObject enginesResponse = (JSONObject) parser.parse(response.body());
-            if (response.statusCode()==200) {
+            if (response.statusCode() == 200) {
                 JSONArray engines = (JSONArray) enginesResponse.get("info");
                 JSONObject firstEngine = (JSONObject) engines.get(0);
                 this.engine = firstEngine.get("name").toString();
-            }
-            else{
+            } else {
                 System.out.println("Problem with JSON occured");
             }
-        }catch(IOException | InterruptedException | ParseException e){
+        } catch (IOException | InterruptedException | ParseException e) {
             e.printStackTrace();
         }
     }
 
-    public void startEngine(){
+    public void startEngine() {
         JSONObject json = new JSONObject();
         json.put("engine", getEngine());
         String jsonData = json.toString();
@@ -141,11 +135,11 @@ public class UCIHttpClient {
 
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode()==200){
+            if (response.statusCode() == 200) {
                 System.out.println("Started " + this.engine);
                 JSONObject loginResponse = (JSONObject) parser.parse(response.body());
             }
-        }catch(IOException | InterruptedException | ParseException e){
+        } catch (IOException | InterruptedException | ParseException e) {
             System.out.println("Engine start failed");
             e.printStackTrace();
         }
@@ -178,7 +172,8 @@ public class UCIHttpClient {
         List<String> msgs = new ArrayList<>();
         private List<Boolean> flags = new ArrayList<Boolean>();
 
-        public WebSocketClient() {}
+        public WebSocketClient() {
+        }
 
         @Override
         public void onOpen(WebSocket webSocket) {
@@ -206,7 +201,9 @@ public class UCIHttpClient {
         }
 
         public Boolean getFlag(int n) {
-            if (n >= flags.size()){ return false;}
+            if (n >= flags.size()) {
+                return false;
+            }
             return flags.get(n);
         }
 
@@ -215,7 +212,7 @@ public class UCIHttpClient {
         }
     }
 
-    private void initializeSocket(Integer cores){
+    private void initializeSocket(Integer cores) {
         WebSocketClient wsListener = new WebSocketClient();
         try {
             WebSocket ws = httpClient.newWebSocketBuilder()
@@ -223,58 +220,61 @@ public class UCIHttpClient {
                     .buildAsync(URI.create(getWstUrl()), wsListener)
                     .join();
             this.socket = ws;
-        }catch(CompletionException e){
+        } catch (CompletionException e) {
             System.out.println("Connection to the websocket failed");
         }
 
         this.socketListener = wsListener;
         socket.sendText("setoption name Threads value " + cores.toString(), true);
+        socket.sendText("setoption name MultiPV value 3", true);
     }
 
-    public Integer rateGame(String fen, Integer depth, Integer n){
+    public ArrayList<ArrayList<String>> rateGame(String fen, Integer depth, Integer n) {
         socket.sendText("ucinewgame", true);
         socket.sendText("position fen " + fen, true);
         socket.sendText("go depth " + depth.toString(), true);
 
-        while(!socketListener.getFlag(n)){
+        while (!socketListener.getFlag(n)) {
             try {
                 Thread.sleep(5);
-            }catch(InterruptedException e){
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
         List<String> response = socketListener.getResponse(n);
-        Integer value = processResponse(response);
+        ArrayList<ArrayList<String>> value = processResponse(response, depth);
         return value;
     }
 
-    public void stopSocket(){
+    public void stopSocket() {
         socket.sendText("stop", true);
     }
 
-    private Integer processResponse(List<String> response){
+    private ArrayList<ArrayList<String>> processResponse(List<String> response, Integer depth) {
         ArrayList<String> depths = new ArrayList<String>();
-        ArrayList<String> cps = new ArrayList<String>();
-        ArrayList<String> pvs = new ArrayList<String>();
-        for (String line: response){
-            if (line.contains("info depth") && line.contains("multipv")){
+        ArrayList<String> pvArr = new ArrayList<>();
+        ArrayList<String> cpArr = new ArrayList<>();
+
+        for (String line : response) {
+            if (line.contains("info depth") && line.contains("multipv") && line.contains((" depth " + depth.toString()))) {
                 List<String> tokens = Arrays.asList(line.split(" "));
                 int id = tokens.indexOf("depth");
-                String d = tokens.get(id+1);
-                depths.add(d);
-                int ic = tokens.indexOf("cp");
-                String c = tokens.get(ic+1);
-                cps.add(c);
-                int ip = tokens.indexOf("pv");
-                String p = tokens.get(ip+1);
-                pvs.add(p);
+                int d = Integer.parseInt(tokens.get(id + 1));
+
+                if (d == depth) {
+                    int ip = tokens.indexOf("pv");
+                    String p = tokens.get(ip + 1);
+                    int ic = tokens.indexOf("cp");
+                    String c = tokens.get(ic + 1);
+                    pvArr.add(p);
+                    cpArr.add(c);
+                }
             }
         }
-        return Integer.parseInt(cps.get(cps.size()-1));
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
+        result.add(pvArr);
+        result.add(cpArr);
+        return result;
     }
-
-
-
-
 }
