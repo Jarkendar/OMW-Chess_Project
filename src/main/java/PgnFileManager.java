@@ -6,6 +6,7 @@ import configuration.Header;
 import filters.RatedEntity;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,10 +39,10 @@ public class PgnFileManager {
 					meta.setRequired(true);
 	}
 	
-    public void savePgnFile(String outputPath, LinkedList<RatedGame> ratedGames){
+    public void savePgnFile(String outputPath, int minCp, LinkedList<RatedGame> ratedGames){
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(outputPath)))){
             for(RatedGame ratedGame: ratedGames) {
-                bufferedWriter.write(createStringFromRatedGames(ratedGame));
+                bufferedWriter.write(createStringFromRatedGames(ratedGame, minCp));
                 bufferedWriter.newLine();
             }
             bufferedWriter.flush();
@@ -93,17 +94,26 @@ public class PgnFileManager {
         return games;
     }
 
-    private String createStringFromRatedGames(RatedGame ratedGame){
+    private String createStringFromRatedGames(RatedGame ratedGame, int minCp){
         String output = "";
         RatedEntity bestMove = ratedGame.getBestMove();
         if (bestMove != null) {
             //todo: dodac headery (filterMeta?)
+            //todo: czy byl uzyty w grze {G}
             String fen = bestMove.getBoardBefore();
             output += "[FEN \""+ fen + "\"]\n";
             output += ((Move) bestMove.getEntity()).getPANRepresentation(); //todo: Zmienic na poprawna notacje
-            output += "{" + bestMove.getCentiPawsRate() + "}";
-            //todo: waracje jako second best i third best z uwzglednieniem parametru -cp
-            //todo: czy byl uzyty w grze {G}
+            output += " {" + bestMove.getCentiPawsRate() + "} ";
+			ArrayList<String> variationsPv = bestMove.getVariationsPv();
+            ArrayList<Integer> variationsCp = bestMove.getVariationsCp();
+            for (int k = 0; k < Math.min(variationsCp.size(), 2); k++){
+                String goodMovePv = variationsPv.get(k);
+                Integer goodMoveCp = variationsCp.get(k);
+                if( bestMove.getCentiPawsRate() - goodMoveCp >= minCp ){
+                    output += "(" + goodMovePv; //todo: zamienić na poprawną notację
+                    output += "{" + goodMoveCp.toString() + "})";
+                }
+            }
             output += "\n";
         }
 
