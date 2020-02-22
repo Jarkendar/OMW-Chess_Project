@@ -115,7 +115,12 @@ public class PgnFileManager {
             String originalMove = ((Move)(ratedGame.getGames().getEntities().get(moveNb))).getPANRepresentation();
             output += "[FEN \""+ fen + "\"]\n";
             output += ((Move) bestMove.getEntity()).getSan(); //todo: Zmienic na poprawna notacje
-            output += " {" + bestMove.getCentiPawsRate() + "} ";
+            if (bestMove.getCentiPawsRate() == Integer.MAX_VALUE){
+                output += " {mate} ";
+            }
+            else {
+                output += " {" + bestMove.getCentiPawsRate() + "} ";
+            }
             if(originalMove.equals(((Move) bestMove.getEntity()).getPANRepresentation()))
 				output+="{G} ";
 			ArrayList<String> variationsPv = bestMove.getVariationsPv();

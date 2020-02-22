@@ -40,14 +40,24 @@ public class ServerConnector {
 
                 ArrayList<ArrayList<String>> resultVar = uciClient.rateGame(((Move) entity).getBoardBefore(), maxDepth, 2*(n+i));
                 ArrayList<ArrayList<String>> result = uciClient.rateGame(((Move) entity).getBoardAfter(), maxDepth, (2*(n+i))+1);
-                int resCp = Integer.parseInt(result.get(1).get(0));
-				ArrayList<String> pvs = resultVar.get(0);
+                int resCp;
+                if (result.get(1).get(0).equals("mate")){
+                    resCp = Integer.MAX_VALUE;
+                }
+                else {
+                    resCp = Integer.parseInt(result.get(1).get(0));
+                }
+                ArrayList<String> pvs = resultVar.get(0);
 				ArrayList<String> cpsStr = resultVar.get(1);
 				ArrayList<Integer> cps = new ArrayList<>();
 
 				for (String str: cpsStr){
-				    if (str.equals("info")){continue;}
-				    cps.add(Integer.parseInt(str));
+				    if (str.equals("mate")){
+                        cps.add(Integer.MAX_VALUE);
+				    }
+				    else {
+                        cps.add(Integer.parseInt(str));
+                    }
                 }
 				
 				RatedEntity re = new RatedEntity((Move) entity, resCp, ((Move) entity).getBoardBefore());

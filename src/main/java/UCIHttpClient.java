@@ -265,8 +265,14 @@ public class UCIHttpClient {
                 if (d == depth) {
                     int ip = tokens.indexOf("pv");
                     String p = tokens.get(ip + 1);
-                    int ic = tokens.indexOf("cp");
-                    String c = tokens.get(ic + 1);
+                    String c;
+                    if (line.contains("mate")){
+                        c = "mate";
+                    }
+                    else {
+                        int ic = tokens.indexOf("cp");
+                        c = tokens.get(ic + 1);
+                    }
                     pvArr.add(p);
                     cpArr.add(c);
                 }
