@@ -114,7 +114,7 @@ public class PgnFileManager {
             
             String originalMove = ((Move)(ratedGame.getGames().getEntities().get(moveNb))).getPANRepresentation();
             output += "[FEN \""+ fen + "\"]\n";
-            output += ((Move) bestMove.getEntity()).getSan(); //todo: Zmienic na poprawna notacje
+            output += ((Move) bestMove.getEntity()).getSan().replace(':', 'x'); //todo: Zmienic na poprawna notacje
             if (bestMove.getCentiPawsRate() == Integer.MAX_VALUE){
                 output += " {mate} ";
             }
@@ -127,7 +127,7 @@ public class PgnFileManager {
             ArrayList<Integer> variationsCp = bestMove.getVariationsCp();
             for (int k = 0; k < Math.min(variationsCp.size(), 2); k++){
                 String goodMovePv = variationsPv.get(k);
-                String sanRepresentation = SANHelper.replaceSymbolsWithLetters(SANHelper.getSanFromLAN(goodMovePv, chessGame));
+                String sanRepresentation = SANHelper.replaceSymbolsWithLetters(SANHelper.getSanFromLAN(goodMovePv, chessGame)).split(". ")[1];
                 chessGame.undoLastMove();
                 Integer goodMoveCp = variationsCp.get(k);
                 if( bestMove.getCentiPawsRate() - goodMoveCp >= minCp ){
