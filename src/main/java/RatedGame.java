@@ -1,3 +1,5 @@
+import chess.parser.Entity;
+import chess.parser.Move;
 import chess.parser.pgn.PGNGame;
 import filters.RatedEntity;
 
@@ -23,17 +25,12 @@ public class RatedGame {
         return ratedEntities;
     }
 
-    Comparator<RatedEntity> compareByCp = new Comparator<RatedEntity>() {
-        @Override
-        public int compare(RatedEntity o1, RatedEntity o2) {
-            return o1.getCentiPawsRate() - o2.getCentiPawsRate();
-        }
-    };
+    Comparator<RatedEntity> compareByCp = Comparator.comparingInt(RatedEntity::getCentiPawsRate);
 
     public RatedEntity getBestMove(){
 
         if (!ratedEntities.isEmpty()) {
-            Collections.sort(ratedEntities, compareByCp.reversed());
+            ratedEntities.sort(compareByCp.reversed());
             return ratedEntities.get(0);
         }
         else return null;

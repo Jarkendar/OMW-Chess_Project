@@ -23,21 +23,24 @@ public class ServerConnector {
 
     public LinkedList<RatedGame> ratedGames(List<FilterResult> filterResults){
         LinkedList<RatedGame> ratedGames = new LinkedList<>();
+        int n = 0;
         for (FilterResult result: filterResults) {
-            ratedGames.addLast(new RatedGame(result.getPgnGame(), ratePotentialMoves(result.getPotentialMoves())));
+            LinkedList<Entity> potMoves = result.getPotentialMoves();
+            ratedGames.addLast(new RatedGame(result.getPgnGame(), ratePotentialMoves(potMoves, n)));
+            n += potMoves.size();
         }
         return ratedGames;
     }
 
-    private LinkedList<RatedEntity> ratePotentialMoves(LinkedList<Entity> potentialMoves){
-        LinkedList<RatedEntity> ratedEntities = new LinkedList<RatedEntity>();
+    private LinkedList<RatedEntity> ratePotentialMoves(LinkedList<Entity> potentialMoves, int n){
+        LinkedList<RatedEntity> ratedEntities = new LinkedList<>();
         for (int i = 0; i < potentialMoves.size(); i++){
             Entity entity = potentialMoves.get(i);
             if (entity instanceof Move) {
 
-                ArrayList<ArrayList<String>> resultVar = uciClient.rateGame(((Move) entity).getBoardBefore(), maxDepth, 2*i);
-                ArrayList<ArrayList<String>> result = uciClient.rateGame(((Move) entity).getBoardAfter(), maxDepth, (2*i)+1);
-                Integer resCp = Integer.parseInt(result.get(1).get(0));
+                ArrayList<ArrayList<String>> resultVar = uciClient.rateGame(((Move) entity).getBoardBefore(), maxDepth, 2*(n+i));
+                ArrayList<ArrayList<String>> result = uciClient.rateGame(((Move) entity).getBoardAfter(), maxDepth, (2*(n+i))+1);
+                int resCp = Integer.parseInt(result.get(1).get(0));
 				ArrayList<String> pvs = resultVar.get(0);
 				ArrayList<String> cpsStr = resultVar.get(1);
 				ArrayList<Integer> cps = new ArrayList<>();

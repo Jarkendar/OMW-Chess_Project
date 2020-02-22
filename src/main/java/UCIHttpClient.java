@@ -252,12 +252,12 @@ public class UCIHttpClient {
     }
 
     private ArrayList<ArrayList<String>> processResponse(List<String> response, Integer depth) {
-        ArrayList<String> depths = new ArrayList<String>();
+        ArrayList<String> depths = new ArrayList<>();
         ArrayList<String> pvArr = new ArrayList<>();
         ArrayList<String> cpArr = new ArrayList<>();
 
         for (String line : response) {
-            if (line.contains("info depth") && line.contains("multipv") && line.contains((" depth " + depth.toString()))) {
+            if (line.contains("info depth") && line.contains("multipv") && line.contains(" pv ") && line.contains((" depth " + depth.toString()))) {
                 List<String> tokens = Arrays.asList(line.split(" "));
                 int id = tokens.indexOf("depth");
                 int d = Integer.parseInt(tokens.get(id + 1));
